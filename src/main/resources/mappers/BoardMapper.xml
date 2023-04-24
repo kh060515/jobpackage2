@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="itachi.uchiha.mapper.board">
+	
+	<select id="mylist" resultType="itachi.uchiha.domain.RegistrationDTO">
+		select * from sasuke_mb where mb_id=#{mb_Id} order by usellCount desc
+	</select>
+	
+	<update id="cashget">
+		update itachi_mb set mb_cash=mb_cash-#{nowMoney} where mb_id=#{sellId}
+	</update>
+	
+	<update id="cashget2">
+		update itachi_mb set mb_cash=mb_cash+#{nowMoney} where mb_id=#{mb_Id}
+	</update>
+	
+	<select id="cashgetui" resultType="ReceiptDTO">
+		select * from sell_mb where nowMoney=#{nowMoney} and sellnumber=#{productNumber}
+	</select>
+	
+	<update id="Rupdate">
+			update sasuke_mb set title=#{title}, setence=#{setence}, nowmoney=#{nowMoney} where mb_id=#{mb_Id} and productNumber=#{productNumber}
+	</update>
+	
+	<select id="Rupdateui" resultType="RegistrationDTO">
+		select * from sasuke_mb where mb_Id=#{mb_Id} and productNumber=#{productNumber}	
+	</select>
+	
+	<update id="cashback">
+		update itachi_mb set mb_cash=mb_cash-#{mb_cashback} where mb_Id=#{mb_Id}
+	</update>
+	
+	<update id="usellCount">
+      update sasuke_mb set usellCount=#{usellCount} where productNumber=#{productNumber}
+   </update>
+	
+	<select id="selectSellBySellId" resultType="itachi.uchiha.domain.SellDTO">
+		select * from sell_mb where sellNumber=#{productNumber} order by sellDate desc 
+	</select>
+
+	<update id="cash">
+		update itachi_mb set mb_cash = mb_cash+ #{mb_cash} where mb_Id=#{mb_Id}
+	</update>
+	
+
+	<select id="category" resultType="itachi.uchiha.domain.RegistrationDTO">
+		select * from sasuke_mb where productNumber like '%'||#{productNumber}||'%'
+	</select>
+	
+	<select id="sellCount" resultType="Integer">
+		select count(*) from sell_mb where sellNumber=#{productNumber}
+	</select>
+	
+	<select id="mainView" resultType="itachi.uchiha.domain.RegistrationDTO">
+		select * from sasuke_mb order by usellCount desc
+	</select>
+	
+	<select id="getAttach" resultType="String">
+	select fullName from
+	itachi_attach where productNumber=#{productNumber}
+	</select>
+
+	<select id="getAt_id" resultType="Integer">
+		select max(at_id) from itachi_attach
+	</select>
+
+	<insert id="addAttach">
+		insert into itachi_attach
+		(at_id,fullName,productNumber)
+		values
+		(#{at_id},#{fullName},#{productNumber})
+	</insert>
+
+	<select id="createBno" resultType="String">
+		select max(productNumber) from itachi_attach
+	</select>
+	
+	<select id="readid" resultType="MemberDTO">
+		select * from itachi_mb where mb_Id=#{mb_Id}	
+	</select>
+	
+	<sql id="searchIf">
+			<if test="searchType != null">
+				where upper(title) like '%'||upper(#{keyword})||'%'
+				or upper(setence) like '%'||upper(#{keyword})||'%'
+				or upper(mb_Id) like '%'||upper(#{keyword})||'%'
+			</if>	
+	</sql>
+
+	<select id="search" resultType="itachi.uchiha.domain.RegistrationDTO">
+			<![CDATA[
+		select * from sasuke_mb 
+		]]>
+		<include refid="searchIf"></include> 
+		<!-- 인클루드 태그 시작종료 떨어져있으면 안되더라 크흠.. -->
+		<![CDATA[
+		 order by productNumber desc
+		 ]]>
+		 
+	</select>
+	
+	<select id="getSearchAmount" resultType="Integer">
+	select count(productNumber) from sasuke_mb
+	<include refid="searchIf"></include>
+	order by productNumber desc
+	</select>
+	
+	<update id="registration2">
+		update sasuke_mb set endDate=writedate+deadline where productNumber=#{productNumber}
+	</update>
+	
+	<insert id="registration">
+		insert into sasuke_mb
+		(mb_id,productNumber,deadline,startMoney,directMoney,title,setence)
+		values
+		(#{mb_Id},#{productNumber},#{deadline},#{startMoney},#{directMoney},#{title},#{setence})
+	</insert>
+
+	<select id="idCheck" resultType="String">
+		select mb_id from itachi_mb where mb_id=#{id}
+	</select>
+	
+	<select id="emailCheck" resultType="String">
+		select mb_email from itachi_mb where mb_email=#{mb_email}
+	</select>
+	
+	<insert id="insert">
+		insert into itachi_mb
+		(mb_Id, mb_Pw, mb_Name,
+		mb_Birth, mb_Zip, mb_Addr1, mb_Addr2, mb_Addr3,
+		mb_Hp, mb_Email,
+		mb_Bank, mb_Account)
+		values
+		(#{mb_Id}, #{mb_Pw},
+		#{mb_Name}, #{mb_Birth},
+		#{mb_Zip}, #{mb_Addr1}, #{mb_Addr2},
+		#{mb_Addr3}, #{mb_Hp},
+		#{mb_Email}, #{mb_Bank},#{mb_Account})
+	</insert>
+	
+	<update id="selectpw">
+		update itachi_mb set mb_Pw=#{mb_Pw} where mb_Id=#{mb_Id} and mb_email=#{mb_Email} and mb_birth=#{mb_Birth}
+	</update>
+
+	<select id="login" resultType="itachi.uchiha.domain.MemberDTO">
+		select * from itachi_mb
+		where
+		mb_Id=#{mb_Id} and mb_Pw=#{mb_Pw}
+	</select>
+
+	<select id="findid" parameterType="String" resultType="String">
+		select mb_Id from itachi_mb where mb_Name=#{mb_Name} and mb_Email=#{mb_Email}
+	</select>
+
+	
+
+	<select id="updateui" resultType="itachi.uchiha.domain.MemberDTO">
+		select * from itachi_mb where mb_Id=#{mb_Id}		
+	</select>
+
+
+
+	<update id="update">
+		update itachi_mb set
+
+		mb_Pw=#{mb_Pw},
+		mb_Name=#{mb_Name},
+		mb_Zip=#{mb_Zip},
+		mb_Addr1=#{mb_Addr1},
+		mb_Addr2=#{mb_Addr2},
+		mb_Addr3=#{mb_Addr3},
+		mb_Email=#{mb_Email},
+		mb_Bank=#{mb_Bank},
+		mb_Account=#{mb_Account}
+		where
+		mb_Id=#{mb_Id}
+	</update>
+	
+	<insert id="sellin">
+		insert into sell_mb
+		(sellNumber,sellId,nowMoney)
+		values
+		(#{sellNumber},#{sellId},#{nowMoney})
+	</insert>
+	
+	<update id="umoney">	
+		update sasuke_mb set nowMoney = (select max(nowMoney) from sell_mb where sellNumber = #{productNumber}) where productNumber = #{productNumber}
+	</update>
+	
+	
+	
+	<select resultType="itachi.uchiha.domain.RegistrationDTO" id="select_view"> 
+		select * from sasuke_mb where productNumber=#{productNumber} 
+	</select>
+
+
+</mapper>
+
+<!-- <mapper namespace="itachi.uchiha.mapper.board"> <select id="login" resultType="MemberDTO"> 
+	select * from itachi_mb where mb_id=#{mb_Id} and mb_pw=#{mb_Pw} >>>>>>> branch 
+	'master' of https://github.com/kimseung33/itachi.git </select> </mapper> -->
